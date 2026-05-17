@@ -1,4 +1,4 @@
-# mobiles
+# mobile
 
 Flood Early Warning System Mobile App
 
