@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/auth_provider.dart';
+import '../models/admin_provider.dart';
 import '../widgets/ews_appbar.dart';
 import 'main_navigation.dart';
 import '../theme/app_theme.dart';
@@ -17,6 +18,9 @@ class BerandaScreen extends StatelessWidget {
     final String currentRole = authProvider.userRole.toString().toUpperCase();
     final bool isAdmin = currentRole == 'ADMIN' || currentRole == 'USERROLE.ADMIN';
 
+    final adminProvider = context.watch<AdminProvider>();
+    final activeSensorCount = adminProvider.sensors.isNotEmpty ? adminProvider.sensors.length : 0;
+
     return Scaffold(
       appBar: EWSAppBar(onRefresh: onRefresh),
       // PERCAKAPAN HAK AKSES: Jika Admin, tampilkan Dashboard Operasional Mobile Admin
@@ -30,7 +34,7 @@ class BerandaScreen extends StatelessWidget {
               ]
             : [
                 _HeroSection(),
-                _StatsSection(),
+                _StatsSection(activeSensorCount),
                 _FeaturesSection(),
                 _HowItWorksSection(),
                 _FooterSection(),
@@ -312,10 +316,17 @@ class _HeroSection extends StatelessWidget {
 }
 
 class _StatsSection extends StatelessWidget {
+  final int activeSensorCount;
+  const _StatsSection(this.activeSensorCount);
+
   @override
   Widget build(BuildContext context) {
     final stats = [
-      {'value': '3', 'label': 'Sensor Aktif', 'icon': Icons.sensors},
+      {
+        'value': '$activeSensorCount',
+        'label': 'Sensor Aktif',
+        'icon': Icons.sensors,
+      },
       {'value': '24/7', 'label': 'Monitoring', 'icon': Icons.access_time},
       {'value': '<5 mnt', 'label': 'Respons Alert', 'icon': Icons.notifications_active},
       {'value': '99%', 'label': 'Uptime Sistem', 'icon': Icons.cloud_done},

@@ -485,6 +485,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         (adminProvider.dashboardStats['recentAlerts'] as List<dynamic>?)
             ?.length ??
         0;
+    final activeCount = hasSensors ? sensors.length : 0;
     final cards = [
       {
         'label': 'Tinggi Air (Aktif)',
@@ -509,9 +510,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         'color': risky > 0 ? AppTheme.statusBahaya : AppTheme.statusNormal,
       },
       {
-        'label': 'Konektivitas',
-        'value': hasSensors ? '${sensors.length}/${sensors.length}' : '0/0',
-        'sub': hasSensors ? 'Sensor online aktif' : 'Tidak ada sensor',
+        'label': 'Sensor Aktif',
+        'value': '$activeCount',
+        'sub': hasSensors ? 'Sensor online aktif' : 'Sensor belum tersedia',
         'color': AppTheme.statusNormal,
       },
     ];

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../models/auth_provider.dart';
+import '../models/admin_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/auth_widgets.dart';
 import 'login_screen.dart';
@@ -260,24 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }),
       _MenuItem(Icons.map_outlined, 'Sensor Terdekat', 'Pantau sensor di sekitar Anda', () {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Sensor Aktif'),
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(' 📍  Sensor Hulu — Batang Arau', style: TextStyle(fontSize: 13)),
-                SizedBox(height: 6),
-                Text(' 📍  Sensor Tengah — Batang Arau', style: TextStyle(fontSize: 13)),
-                SizedBox(height: 6),
-                Text(' 📍  Sensor Hilir — Batang Arau', style: TextStyle(fontSize: 13)),
-              ],
-            ),
-            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Tutup'))],
-          ),
-        );
+        _showSensorDialog(context);
       }),
       _MenuItem(Icons.help_outline, 'Bantuan & FAQ', 'Panduan penggunaan aplikasi', () {
         showDialog(
@@ -401,6 +385,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showSensorDialog(BuildContext context) {
+    final adminProvider = context.read<AdminProvider>();
+    final sensors = adminProvider.sensors;
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Sensor Aktif'),
+        content: sensors.isNotEmpty
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: sensors.map<Widget>((sensor) {
+                  final name = sensor is Map<String, dynamic>
+                      ? sensor['name']?.toString() ?? 'Sensor Tidak Diketahui'
+                      : sensor.toString();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text(' 📍  $name', style: const TextStyle(fontSize: 13)),
+                  );
+                }).toList(),
+              )
+            : const Text('Belum ada sensor terpasang di akun Anda.'),
+        actions: [TextButton(onPressed: () => Navigator.pop(dialogCtx), child: const Text('Tutup'))],
       ),
     );
   }
